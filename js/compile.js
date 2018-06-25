@@ -1,3 +1,36 @@
+let CompileUtil = {
+	// 获取实例上对应的数据,返回vm.$data.xxx.yyy
+	getVal(vm,expr){
+		expr = expr.split('.');
+		return expr.reduce((pre,next)=>{
+			return pre[next];
+		},vm.$data)
+	},
+	// 公共逻辑的部分
+	updater:{
+		textUpdater(node,value){
+			node.textContent = value;
+		},
+		modelUpdate(node,value){
+			node.value = value;
+		}
+	},
+	//带v-model的元素节点
+	model(node,vm,expr){
+		let updateFn = this.updater['modelUpdater'];
+		updateFn && updateFn(node,this.getVal(vm,expr));
+	},
+	//文本节点编译
+	text(node,vm,expr){
+		let updateFn = this.updateFn['textUpdater'];
+		let value = text.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
+			//拿到第一个分组,并且要去的没有空格的字符串
+			return this.getVal(vm,arguments[1].trim());
+		})
+		console.log(value);
+		updateFn && updateFn(node,value);
+	}
+}
 class Compile{
 	constructor(el, vm){
 		this.$el = this.isElementNode(el) ? el : document.querySelector(el);
@@ -63,6 +96,10 @@ class Compile{
 	//编译文本节点
 	compileText(node){
 		let text = node.textContent;
-		let reg = /\{\{([^}]+)\}\}/g
+		let reg = /\{\{([^}]+)\}\}/g;
+		if(reg.test(text)){
+			//编译工具方法
+			CompileUtil['text'](node,this.vm,text)
+		}
 	}
 }
