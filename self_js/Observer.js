@@ -1,8 +1,6 @@
 class Observer{
 	constructor(data){
-		this.$data = data;
-
-		this.observe(this.$data);
+		this.observe(data);
 	}
 	//递归进行数据劫持
 	observe(data){
@@ -21,11 +19,13 @@ class Observer{
 	}
 	//创建响应式数据
 	defineReactive(obj,key,value){
-		let that = this;
+		let that = this; 
+		let dep = new Dep();
 		Object.defineProperty(obj,key,{
 			enumerable: true,
 			configurable: true,
 			get(){
+				Dep.target && dep.addSub(Dep.target);
 				return value;
 			},
 			set(newValue){
@@ -33,6 +33,7 @@ class Observer{
 					// 每次有新值时需要做数据劫持
 					that.observe(newValue);
 					value = newValue;
+					dep.notify();
 				}
 			}
 		})

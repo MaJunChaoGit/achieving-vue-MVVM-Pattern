@@ -1,13 +1,57 @@
 let CompileUtil = {
 	model(node,vm,expr){
 		// console.log(node,vm,expr)
+		let updateFn = this.updater['modelUpdater'];
+		new Watcher(vm,expr,(newValue)=>{
+			updateFn && updateFn(node,this.getVal(vm,expr))	
+		})
+		node.addEventListener('input',(e)=>{
+			let newValue = e.target.value;
+			this.setVal(vm,expr,newValue);
+		})
+		updateFn && updateFn(node,this.getVal(vm,expr))
 	},
 	text(node,vm,expr){
-		//有捕获组的情况下是4个参数
-		let value = expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
-			return arguments[1].trim(); //还需要分割对象
+		let updateFn = this.updater['textUpdater'];
+		let value = this.getTextVal(vm,expr);
+
+		expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
+			new Watcher(vm,arguments[1].trim(),(newValue)=>{
+				updateFn && updateFn(node,this.getTextVal(vm,newValue))
+			})
 		})
+		//有捕获组的情况下是4个参数
 		
+		updateFn && updateFn(node,value)
+
+	},
+	getVal(vm,expr){
+		expr = expr.split('.');
+		return expr.reduce((pre,next)=>{
+			return pre[next];
+		},vm.$data)
+	},
+	getTextVal(vm,expr){
+		return expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
+			return this.getVal(vm,arguments[1].trim()); //还需要分割对象
+		})
+	},
+	updater:{
+		textUpdater(node,value){
+			node.textContent = value;
+		},
+		modelUpdater(node,value){
+			node.value = value
+		}
+	},
+	setVal(vm,expr,value){
+		expr = expr.split('.');
+		return expr.reduce((pre,next,currentIndex) =>{
+			if(currentIndex === expr.length - 1){
+				return pre[next] = value;
+			}
+			return pre[next];
+		},vm.$data);
 	}
 }
 
@@ -20,6 +64,7 @@ class Compile{
 			//将节点先放入内存中
 			let fragment = this.nodeToFragment(this.$el);
 			this.compile(fragment);
+			this.$el.appendChild(fragment);
 		}
 	}
 	isElementNode(el){
