@@ -1,0 +1,21 @@
+.container{
+	width: 600px;
+	margin: auto;
+	margin-top: 300px;
+}
+.form-group{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 5px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+label{
+	font-size: 22px;
+	font-weight: 500;
+	white-space: pre;
+}
+span{
+	white-space: pre;	
+}

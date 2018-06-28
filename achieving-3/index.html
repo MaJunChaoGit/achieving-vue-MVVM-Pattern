@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
-	<link rel="stylesheet" href="self_css/index.css">
+	<link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 	<div id="app" class="container">
@@ -15,21 +15,19 @@
 		<div class="form-group">
 			<label for="">Info:  </label>
 			<input type="text" v-model="info.a">
-			<span>   {{ info.a }} </span>
+			<span>   {{ info.a }} {{ message }} {{ info.a }} </span>
 		</div>
 	</div>
-	<script type="text/javascript" src="js/dep.js"></script>
-	<script type="text/javascript" src="js/watcher.js"></script>
-	<script type="text/javascript" src="self_js/Observer.js"></script>
-	<script type="text/javascript" src="self_js/Compile.js"></script>
-	<script type="text/javascript" src="self_js/MVVM.js"></script>
+	<script type="text/javascript" src="js/Observer.js"></script>
+	<script type="text/javascript" src="js/Compile.js"></script>
+	<script type="text/javascript" src="js/MVVM.js"></script>
 	<script type="text/javascript">
 		let vm = new MVVM({
 			el: '#app',
 			data: {
-				'message': 'Hi I am MVVM',
-				'info': {
-					'a': 'very nice'
+				message: 'I am Mjc',
+				info: {
+					a: 'very nice'
 				}
 			}
 		})

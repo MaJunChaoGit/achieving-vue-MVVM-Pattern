@@ -32,6 +32,7 @@ let CompileUtil = {
 		},vm.$data)
 	},
 	getTextVal(vm,expr){
+		console.log(expr)
 		return expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
 			return this.getVal(vm,arguments[1].trim()); //还需要分割对象
 		})
@@ -106,6 +107,7 @@ class Compile{
 	compileText(node){
 		let text = node.textContent;
 		let reg = /\{\{([^}]+)\}\}/g;
+		debugger;
 		// 如果匹配模板语法
 		if(reg.test(text)){
 			// 将其经行编译

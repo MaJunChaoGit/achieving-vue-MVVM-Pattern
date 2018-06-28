@@ -6,6 +6,7 @@ class Watcher{
 		this.$oldValue = this.get();
 	}
 	get(){
+		debugger;
 		Dep.target = this;
 		let oldValue = this.getVal(this.$vm,this.$expr);
 		Dep.target = null;
