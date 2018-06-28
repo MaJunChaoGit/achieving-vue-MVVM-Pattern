@@ -1,3 +1,33 @@
+let CompileUtil = {
+	text(node,vm,expr){
+		let updateFn = this.updater['textUpdater'];
+		let value = this.getTextVal(vm,expr);
+		updateFn && updateFn(node,value)
+	},
+	model(node,vm,expr){
+		let updateFn = this.updater['modelUpdater'];
+		updateFn && updateFn(node,this.getVal(vm,expr));
+	},
+	getTextVal(vm,expr){
+		return expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
+			return this.getVal(vm,arguments[1].trim());
+		})
+	},
+	getVal(vm,expr){
+		expr = expr.split('.');
+		return expr.reduce((pre,next)=>{
+			return pre[next];
+		},vm.$data);
+	},
+	updater: {
+		modelUpdater(node,value){
+			node.value = value;
+		},
+		textUpdater(node,value){
+			node.textContent = value;
+		}
+	}
+}
 class Compile{
 	constructor(el,vm,data){
 		this.$el = this.isElementNode(el) ? el : document.querySelector(el);
@@ -18,17 +48,44 @@ class Compile{
 	}
 	nodeToFragment(node){
 		let fragment = document.createDocumentFragment();
-		Array.from(node.childNodes).forEach(node=>{
-			let firstChild;
-			while(firstChild = node.firstChild){
-				console.log(firstChild);
-				fragment.appendChild(firstChild);
-			}	
-		});
+		let firstChild;
+		//循环添加node中的节点,直到为空
+		while(firstChild = node.firstChild){
+			fragment.appendChild(firstChild);
+		}	
 		return fragment;
 	}
 	compile(fragment){
-		console.log(fragment);
+		Array.from(fragment.childNodes).forEach(node=>{
+			//判断是文字节点还是元素节点
+			if(this.isElementNode(node)){
+				this.compileElement(node);
+				this.compile(node);
+			}else{
+				this.compileText(node);
+			}
+		})
+	}
+	isDirective(attrName){
+		return attrName.includes('v-');
+	}
+	compileElement(node){
+		let attrs = node.attributes;
+		Array.from(attrs).forEach(attr=>{
+			let attrName = attr.nodeName;
+			if(this.isDirective(attrName)){
+				let type = attrName.slice(2);
+				let expr = attr.value;
+				CompileUtil[type](node,this.$vm,expr);
+			}
+		})
+	}
+	compileText(node){
+		let text = node.data;
+		let reg = /\{\{([^}]+)\}\}/g;
+		if(reg.test(text)){
+			CompileUtil['text'](node,this.$vm,text);
+		}
 	}
 
 }

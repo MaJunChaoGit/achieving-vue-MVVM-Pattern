@@ -32,7 +32,6 @@ let CompileUtil = {
 		},vm.$data)
 	},
 	getTextVal(vm,expr){
-		console.log(expr)
 		return expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{
 			return this.getVal(vm,arguments[1].trim()); //还需要分割对象
 		})
