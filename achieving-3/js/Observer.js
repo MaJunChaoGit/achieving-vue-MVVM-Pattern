@@ -13,16 +13,20 @@ class Observer{
 		})
 	}
 	defineReactive(obj,key,value){
+		let that = this;
+		let dep = new Dep();
 		Object.defineProperty(obj,key,{
 			enumerable: true,
 			configurable: true,
 			get(){
+				Dep.target && dep.addSubs(Dep.target);
 				return value;
 			},
 			set(newValue){
 				if(newValue !== value){
 					value = newValue;
-					this.observer(newValue);
+					that.observer(newValue);
+					dep.notify();
 				}
 			}
 		})

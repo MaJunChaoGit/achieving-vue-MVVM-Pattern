@@ -9,15 +9,17 @@
 	<div id="app" class="container">
 		<div class="form-group">
 			<label for="">Message:  </label>
-			<input type="text" v-model="message">
+			<input type="text" v-model="message" >
 			<span>   {{ message }} </span>
 		</div>
 		<div class="form-group">
 			<label for="">Info:  </label>
-			<input type="text" v-model="info.a">
-			<span>   {{ info.a }} {{ message }} {{ info.a }} </span>
+			<input type="text" v-model="info.a" >
+			<span>   {{ info.a }} </span>
 		</div>
 	</div>
+	<script type="text/javascript" src="js/Dep.js"></script>
+	<script type="text/javascript" src="js/Watcher.js"></script>
 	<script type="text/javascript" src="js/Observer.js"></script>
 	<script type="text/javascript" src="js/Compile.js"></script>
 	<script type="text/javascript" src="js/MVVM.js"></script>

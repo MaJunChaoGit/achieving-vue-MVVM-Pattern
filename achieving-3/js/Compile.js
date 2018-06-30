@@ -2,11 +2,32 @@ let CompileUtil = {
 	text(node,vm,expr){
 		let updateFn = this.updater['textUpdater'];
 		let value = this.getTextVal(vm,expr);
+		expr.replace(/\{\{([^}]+)\}\}/,(...arguments)=>{
+			new Watcher(vm,arguments[1].trim(),(newValue)=>{
+				updateFn && updateFn(node,newValue)		
+			})
+		})
 		updateFn && updateFn(node,value)
 	},
 	model(node,vm,expr){
 		let updateFn = this.updater['modelUpdater'];
+		new Watcher(vm,expr,(newValue)=>{
+			updateFn && updateFn(node,newValue);	
+		});
+		node.addEventListener('input',(e)=>{
+			let newValue = e.target.value;
+			this.setVal(vm,expr,newValue);
+		})
 		updateFn && updateFn(node,this.getVal(vm,expr));
+	},
+	setVal(vm,expr,newValue){
+		expr = expr.split('.');
+		return expr.reduce((pre,next,currentIndex)=>{
+			if(currentIndex === expr.length -1){
+				return pre[next] = newValue;
+			}
+			return pre[next];
+		},vm.$data)
 	},
 	getTextVal(vm,expr){
 		return expr.replace(/\{\{([^}]+)\}\}/g,(...arguments)=>{

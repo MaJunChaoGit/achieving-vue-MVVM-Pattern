@@ -1,7 +1,7 @@
 class Watcher{
 	constructor(vm,expr,cb){
 		this.$vm = vm;
-		this.$expr = ex;
+		this.$expr = expr;
 		this.$cb = cb;
 		this.$oldValue = this.get();
 	}
@@ -12,7 +12,7 @@ class Watcher{
 		return oldValue;
 	}
 	getVal(vm,expr){
-		expr = expr.split('');
+		expr = expr.split('.');
 		return expr.reduce((pre,next)=>{
 			return pre[next];
 		},vm.$data)
