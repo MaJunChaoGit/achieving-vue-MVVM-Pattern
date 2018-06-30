@@ -69,6 +69,7 @@ class Compile{
 	}
 	nodeToFragment(node){
 		let fragment = document.createDocumentFragment();
+
 		let firstChild;
 		//循环添加node中的节点,直到为空
 		while(firstChild = node.firstChild){
@@ -102,7 +103,7 @@ class Compile{
 		})
 	}
 	compileText(node){
-		let text = node.data;
+		let text = node.data; 
 		let reg = /\{\{([^}]+)\}\}/g;
 		if(reg.test(text)){
 			CompileUtil['text'](node,this.$vm,text);
